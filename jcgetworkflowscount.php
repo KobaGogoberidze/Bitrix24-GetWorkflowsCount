@@ -5,6 +5,8 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 }
 
 use Bitrix\Bizproc\FieldType;
+use \Bitrix\Main\Entity\Query;
+use Bitrix\Bizproc\Workflow\Entity\WorkflowInstanceTable;
 
 class CBPJCGetWorkflowsCountActivity extends CBPActivity
 {
@@ -40,17 +42,17 @@ class CBPJCGetWorkflowsCountActivity extends CBPActivity
     {
         $rootActivity = $this->GetRootActivity();
         [$module, $entity] = $rootActivity->getDocumentType();
+        
+        $queryBuilder = new Query(WorkflowInstanceTable::getEntity());
+        $queryBuilder->addSelect("ID")
+            ->addFilter("MODULE_ID", $module)
+            ->addFilter("ENTITY", $entity);
 
-        $workflowInstancesQuery = Bitrix\Bizproc\Workflow\Entity\WorkflowInstanceTable::GetList(
-            array(
-                "select" => array("ID"),
-                "filter" => array(
-                    "MODULE_ID" => $module,
-                    "ENTITY" => $entity
-                )
-            )
-        );
+        if ($this->ExcludeCurrent) {
+            $queryBuilder->addFilter("!ID", $rootActivity->GetWorkflowInstanceId());
+        }
 
+        $workflowInstancesQuery = $queryBuilder->exec();
         $this->Count = $workflowInstancesQuery->getSelectedRowsCount();
 
         return CBPActivityExecutionStatus::Closed;
