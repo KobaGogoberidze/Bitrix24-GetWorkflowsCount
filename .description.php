@@ -6,10 +6,10 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 
 use Bitrix\Bizproc\FieldType;
 
-$arActivityDescription = [
+$arActivityDescription = array(
     "NAME" => GetMessage("JC_GWC_NAME"),
     "DESCRIPTION" => GetMessage("JC_GWC_DESCRIPTION"),
-    "TYPE" => array("activity"),
+    "TYPE" => "activity",
     "CLASS" => "JCGetWorkflowsCountActivity",
     "JSCLASS" => "BizProcActivity",
     "CATEGORY" => array(
@@ -21,4 +21,4 @@ $arActivityDescription = [
             "TYPE" => FieldType::INT,
         ),
     ),
-];
+);
